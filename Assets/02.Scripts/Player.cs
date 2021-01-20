@@ -14,10 +14,12 @@ public class Player : MonoBehaviour
 
     Vector3 moveVec;
     Rigidbody rigid;
+    Animator anim;
 
     private void Awake()
     {
         rigid = GetComponent<Rigidbody>();
+        anim = GetComponent<Animator>();
     }
 
     private void Update()
@@ -34,16 +36,31 @@ public class Player : MonoBehaviour
     {
         vAxis = Input.GetAxisRaw("Vertical");
         hAxis = Input.GetAxisRaw("Horizontal");
-
+        
         moveVec.Set(-vAxis, 0f, hAxis);
         moveVec = moveVec.normalized * moveSpeed * Time.deltaTime;
 
-        //해당 위치로 이동
-        rigid.MovePosition(transform.position + moveVec);
+        if (vAxis != 0 || hAxis != 0)
+            anim.SetBool("isWalk", true);
+        else
+            anim.SetBool("isWalk", false);
 
-        //보간을 이용한 회전
-        Quaternion rotatePlayer = Quaternion.LookRotation(moveVec);
-        rigid.rotation = Quaternion.Slerp(rigid.rotation, rotatePlayer, rotateSpeed * Time.deltaTime);
+        if (Input.GetKey(KeyCode.LeftShift))
+            anim.SetBool("isRun", true);
+        else
+            anim.SetBool("isRun", false);
+
+        if(anim.GetBool("isRun"))
+            rigid.MovePosition(transform.position + (moveVec * 2f));
+        else
+            rigid.MovePosition(transform.position + moveVec);
+
+
+        if (moveVec != Vector3.zero)
+        {
+            Quaternion rotatePlayer = Quaternion.LookRotation(moveVec);
+            rigid.rotation = Quaternion.Slerp(rigid.rotation, rotatePlayer, rotateSpeed * Time.deltaTime);
+        }
     }
 
     private void OnCollisionEnter(Collision collision)
