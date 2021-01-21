@@ -24,11 +24,11 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetButtonDown("Jump") /*&& !ani.GetBool("isJumping")*/)
+        if (Input.GetButtonDown("Jump") && !isJump/*!ani.GetBool("isJumping")*/)
         {
             rigid.AddForce(Vector2.up * jumpPower, ForceMode.Impulse);
             //ani.SetBool("isJumping", true);
-            isJump = !isJump;
+            isJump = true;
         }
     }
 
@@ -66,6 +66,6 @@ public class Player : MonoBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.tag == "Platform")
-            isJump = !isJump;
+            isJump = false;
     }
 }

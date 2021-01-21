@@ -14,19 +14,19 @@ OcclusionCullingSettings:
 RenderSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 9
-  m_Fog: 0
-  m_FogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
-  m_FogMode: 3
+  m_Fog: 1
+  m_FogColor: {r: 0.509434, g: 0.509434, b: 0.509434, a: 1}
+  m_FogMode: 1
   m_FogDensity: 0.01
   m_LinearFogStart: 0
-  m_LinearFogEnd: 300
+  m_LinearFogEnd: 25
   m_AmbientSkyColor: {r: 1, g: 1, b: 1, a: 1}
   m_AmbientEquatorColor: {r: 0, g: 0, b: 0, a: 1}
   m_AmbientGroundColor: {r: 1, g: 0.8349057, b: 0.504717, a: 1}
   m_AmbientIntensity: 1
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_SkyboxMaterial: {fileID: 2100000, guid: f2b5f3f20933f434e850db1b710542fd, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -97,7 +97,7 @@ LightmapSettings:
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
-  m_LightingDataAsset: {fileID: 112000000, guid: 94eee867f73bd314399a6802967045df,
+  m_LightingDataAsset: {fileID: 112000000, guid: 65594573a04e3974e859ad79f67176de,
     type: 2}
   m_UseShadowmask: 1
 --- !u!196 &4
@@ -412,7 +412,7 @@ Light:
   serializedVersion: 10
   m_Type: 1
   m_Shape: 0
-  m_Color: {r: 0.26415092, g: 0.26415092, b: 0.26415092, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_Intensity: 2.59
   m_Range: 10
   m_SpotAngle: 30
@@ -607,7 +607,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_BackGroundColor: {r: 0.4433962, g: 0.4433962, b: 0.4433962, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -621,7 +621,7 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.1
-  far clip plane: 5000
+  far clip plane: 50
   field of view: 40
   orthographic: 0
   orthographic size: 5
@@ -647,7 +647,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
-  m_LocalRotation: {x: 0.03141417, y: -0.7263195, z: 0.03326865, w: 0.6858326}
+  m_LocalRotation: {x: 0.03141417, y: -0.7263195, z: 0.033268653, w: 0.6858326}
   m_LocalPosition: {x: -2.42, y: 3, z: -2.565}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
@@ -703,7 +703,7 @@ GameObject:
   m_TagString: Platform
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 4294967295
+  m_StaticEditorFlags: 0
   m_IsActive: 1
 --- !u!154 &974729762
 TerrainCollider:
@@ -1601,7 +1601,7 @@ MonoBehaviour:
     FieldOfView: 40
     OrthographicSize: 10
     NearClipPlane: 0.1
-    FarClipPlane: 5000
+    FarClipPlane: 50
     Dutch: 0
     LensShift: {x: 0, y: 0}
   m_Transitions:
@@ -1619,7 +1619,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2070947869}
-  m_LocalRotation: {x: 0.03141417, y: -0.7263195, z: 0.03326865, w: 0.6858326}
+  m_LocalRotation: {x: 0.03141417, y: -0.7263195, z: 0.033268653, w: 0.6858326}
   m_LocalPosition: {x: -2.42, y: 3, z: -2.565}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -1662,6 +1662,11 @@ PrefabInstance:
     - target: {fileID: 8306257338230147168, guid: 52ce7b10d586b784789dbdd18b88a9e9,
         type: 3}
       propertyPath: m_Name
+      value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 8306257338230147168, guid: 52ce7b10d586b784789dbdd18b88a9e9,
+        type: 3}
+      propertyPath: m_TagString
       value: Player
       objectReference: {fileID: 0}
     - target: {fileID: 8306347269702086388, guid: 52ce7b10d586b784789dbdd18b88a9e9,
