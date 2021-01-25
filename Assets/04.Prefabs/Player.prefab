@@ -2330,6 +2330,8 @@ MonoBehaviour:
   rotateSpeed: 4
   moveSpeed: 4
   jumpPower: 10
+  items: []
+  hasItems: 00
 --- !u!1 &8306258483019160900
 GameObject:
   m_ObjectHideFlags: 0

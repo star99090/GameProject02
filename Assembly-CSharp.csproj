@@ -63,6 +63,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\02.Scripts\DamageObject.cs" />
+    <Compile Include="Assets\02.Scripts\Item.cs" />
     <Compile Include="Assets\02.Scripts\LineTrab.cs" />
     <Compile Include="Assets\02.Scripts\Player.cs" />
     <None Include="Assets\06.Res\Fantasy Forest Environment Free Sample\StandardNoCulling.shader" />

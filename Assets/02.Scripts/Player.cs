@@ -16,6 +16,10 @@ public class Player : MonoBehaviour
     Rigidbody rigid;
     Animator anim;
 
+    public GameObject[] items;
+    public bool[] hasItems;
+    GameObject nearObject;
+
     private void Awake()
     {
         rigid = GetComponent<Rigidbody>();
@@ -29,6 +33,19 @@ public class Player : MonoBehaviour
             rigid.AddForce(Vector2.up * jumpPower, ForceMode.Impulse);
             //ani.SetBool("isJumping", true);
             isJump = true;
+        }
+
+        if (Input.GetButtonDown("Interation") && nearObject != null)
+        {
+            if(nearObject.tag == "Item")
+            {
+                Item item = nearObject.GetComponent<Item>();
+                int itemIndex = item.value;
+                hasItems[itemIndex] = true;
+                
+                Destroy(nearObject);
+                //items[itemIndex].SetActive(true);
+            }
         }
     }
 
@@ -67,5 +84,21 @@ public class Player : MonoBehaviour
     {
         if (collision.gameObject.tag == "Platform")
             isJump = false;
+    }
+
+    private void OnTriggerStay(Collider other)
+    {
+        if(other.tag == "Item")
+        {
+            nearObject = other.gameObject;
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if(other.tag == "Item")
+        {
+            nearObject = null;
+        }
     }
 }

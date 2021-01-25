@@ -12,7 +12,7 @@ public class LineTrab : MonoBehaviour
     
     private void OnTriggerEnter(Collider other)
     {
-        rigid.isKinematic = false;
+        rigid.useGravity = true;
         Destroy(this.gameObject);
     }
 }
