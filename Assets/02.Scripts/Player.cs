@@ -11,13 +11,13 @@ public class Player : MonoBehaviour
     private float hAxis;
 
     bool isJump = false;
+    bool throwReady = false;
 
     Vector3 moveVec;
     Rigidbody rigid;
     Animator anim;
 
     public GameObject[] items;
-    public bool[] hasItems;
     GameObject nearObject;
 
     private void Awake()
@@ -40,11 +40,10 @@ public class Player : MonoBehaviour
             if(nearObject.tag == "Item")
             {
                 Item item = nearObject.GetComponent<Item>();
-                int itemIndex = item.value;
-                hasItems[itemIndex] = true;
-                
+                items[item.value].SetActive(true);
+
                 Destroy(nearObject);
-                //items[itemIndex].SetActive(true);
+                throwReady = true;
             }
         }
     }
@@ -55,6 +54,18 @@ public class Player : MonoBehaviour
         hAxis = Input.GetAxisRaw("Horizontal");
         
         moveVec.Set(-vAxis, 0f, hAxis);
+
+        if (throwReady)
+        {
+            if (Input.GetButtonDown("Fire1"))
+            {
+                throwReady = false;
+                items[0].SetActive(false);
+                GameObject obj = Instantiate(items[0], transform.position + moveVec + Vector3.up, Quaternion.identity);
+                obj.GetComponent<Rigidbody>().AddForce(Vector3.forward * 5f);
+            }
+        }
+
         moveVec = moveVec.normalized * moveSpeed * Time.deltaTime;
 
         if (vAxis != 0 || hAxis != 0)
@@ -78,6 +89,8 @@ public class Player : MonoBehaviour
             Quaternion rotatePlayer = Quaternion.LookRotation(moveVec);
             rigid.rotation = Quaternion.Slerp(rigid.rotation, rotatePlayer, rotateSpeed * Time.deltaTime);
         }
+
+        
     }
 
     private void OnCollisionEnter(Collision collision)
