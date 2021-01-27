@@ -10,17 +10,19 @@ public class Player : MonoBehaviour
     private float vAxis;
     private float hAxis;
 
+    bool isAlive = true;
     bool isJump = false;
     bool isDrag = false;
     bool throwReady = false;
     bool transToDragBefore;
+    bool isDraggingFrag = false;
 
-    Vector3 moveVec;
+    public CapsuleCollider col;
     Rigidbody rigid;
     Animator anim;
+    Vector3 moveVec;
 
     public GameObject[] items;
-    public CapsuleCollider col;
     GameObject nearItem;
     GameObject nearDrag;
 
@@ -32,57 +34,76 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetButtonDown("Jump") && !isJump/*!ani.GetBool("isJumping")*/)
+        if (isAlive)
         {
-            rigid.AddForce(Vector2.up * jumpPower, ForceMode.Impulse);
-            //ani.SetBool("isJumping", true);
-            isJump = true;
-        }
-
-        if (Input.GetButtonDown("Interation") && nearItem != null)
-        {
-            if(nearItem.tag == "Item")
+            // Jump
+            if (Input.GetButtonDown("Jump") && !isJump/*!ani.GetBool("isJumping")*/)
             {
-                Item item = nearItem.GetComponent<Item>();
-                items[item.value].SetActive(true);
-
-                Destroy(nearItem);
-                throwReady = true;
+                rigid.AddForce(Vector2.up * jumpPower, ForceMode.Impulse);
+                //ani.SetBool("isJumping", true);
+                isJump = true;
             }
-        }
 
-        if (Input.GetButtonDown("Interation") && nearDrag != null)
-        {
-            
-
-            if (isDrag == false)
+            // Item 획득
+            if (Input.GetButtonDown("Interation") && nearItem != null)
             {
-                transToDragBefore = transform.position.z < nearDrag.transform.position.z ? true : false;
-
-                if (transToDragBefore)
+                if (nearItem.tag == "Item")
                 {
-                    transform.position = new Vector3(nearDrag.transform.position.x, transform.position.y+0.375f, nearDrag.transform.position.z - 2f);
-                    transform.LookAt(nearDrag.transform);
-                    //transform.position += new Vector3(0.5f, 0f, 0f);
+                    Item item = nearItem.GetComponent<Item>();
+                    items[item.value].SetActive(true);
+
+                    Destroy(nearItem);
+                    throwReady = true;
                 }
+            }
+
+            // Drag 자세 시작 및 중단
+            if (Input.GetButtonDown("Interation") && nearDrag != null)
+            {
+                // Drag 자세 취하기
+                if (isDrag == false)
+                {
+                    transToDragBefore = transform.position.z < nearDrag.transform.position.z ? true : false;
+                    isAlive = false;
+
+                    // DragObject보다 왼쪽에 있을 때
+                    if (transToDragBefore)
+                    {
+                        transform.position = nearDrag.transform.position + Vector3.back * 1.9f;
+                        transform.LookAt(nearDrag.transform);
+                        transform.position += new Vector3(0.75f, -0.75f, 0f);
+                    }
+
+                    // DragObject보다 오른쪽에 있을 때
+                    else
+                    {
+                        transform.position = nearDrag.transform.position + Vector3.forward * 1.9f;
+                        transform.LookAt(nearDrag.transform);
+                        transform.position += new Vector3(-0.75f, -0.75f, 0f);
+                    }
+
+                    col.center = new Vector3(0f, 1.55f, 0f);
+                    anim.SetTrigger("DragStart");
+                    Invoke("DragSet", 1.305f);
+                    //StartCoroutine(DragSet());
+                }
+
+                // Drag 자세 취소하기
                 else
                 {
-                    transform.position = new Vector3(nearDrag.transform.position.x, transform.position.y+0.375f, nearDrag.transform.position.z + 2f);
-                    transform.LookAt(nearDrag.transform);
-                    //transform.position += new Vector3(-0.5f, 0f, 0f);
+                    isAlive = false;
+                    col.center = new Vector3(0f, 1.37f, 0f);
+                    anim.SetBool("DragExit", true);
+                    Invoke("DragExit", 1.3f);
+                    isDraggingFrag = false;
+                    anim.speed = 1f;
                 }
-                col.center = new Vector3(0f, 1.5f, 0f);
-                anim.SetTrigger("DragStart");
-                isDrag = true;
-            }
-            else
-            {
-                col.center = new Vector3(0f, 1.37f, 0f);
-                anim.SetBool("DragExit", true);
-                isDrag = false;
             }
         }
     }
+
+    // e 누르고 drag 이동한 뒤에 drag 풀고 다시 e 누르면 오류
+    // 오류를 잡읍시다
 
     void FixedUpdate()
     {
@@ -92,6 +113,7 @@ public class Player : MonoBehaviour
         moveVec.Set(-vAxis, 0f, hAxis);
         moveVec = moveVec.normalized;
 
+        // Item 투척
         if (throwReady)
         {
             if (Input.GetButtonDown("Fire1"))
@@ -105,31 +127,115 @@ public class Player : MonoBehaviour
             }
         }
 
-        Vector3 move = moveVec * moveSpeed * Time.deltaTime;
-
-        if (vAxis != 0 || hAxis != 0)
-            anim.SetBool("isWalk", true);
-        else
-            anim.SetBool("isWalk", false);
-
-        if (Input.GetKey(KeyCode.LeftShift))
-            anim.SetBool("isRun", true);
-        else
-            anim.SetBool("isRun", false);
-
-        if(anim.GetBool("isRun"))
-            rigid.MovePosition(transform.position + (move * 2f));
-        else
-            rigid.MovePosition(transform.position + move);
-
-
-        if (move != Vector3.zero)
+        // Idle 상태의 이동, 회전 및 애니메이션 관리
+        if (isDrag == false)
         {
-            Quaternion rotatePlayer = Quaternion.LookRotation(move);
-            rigid.rotation = Quaternion.Slerp(rigid.rotation, rotatePlayer, rotateSpeed * Time.deltaTime);
+            Vector3 move = moveVec * moveSpeed * Time.deltaTime;
+
+            if (vAxis != 0 || hAxis != 0) anim.SetBool("isWalk", true);
+            else anim.SetBool("isWalk", false);
+
+            if (Input.GetKey(KeyCode.LeftShift)) anim.SetBool("isRun", true);
+            else anim.SetBool("isRun", false);
+
+            // Player 이동 및 회전
+            if (isAlive)
+            {
+                // Player 이동
+                if (anim.GetBool("isRun")) rigid.MovePosition(transform.position + (move * 2f));
+                else rigid.MovePosition(transform.position + move);
+
+                // Player 회전
+                if (moveVec != Vector3.zero)
+                {
+                    Quaternion rotatePlayer = Quaternion.LookRotation(moveVec);
+                    rigid.rotation = Quaternion.Slerp(rigid.rotation, rotatePlayer, rotateSpeed * Time.deltaTime);
+                }
+            }
         }
 
-        
+        // Drag 상태의 이동, 회전 및 애니메이션 관리
+        else
+        {
+            moveVec.Set(0f, 0f, hAxis);
+            Vector3 move = moveVec.normalized * moveSpeed * Time.deltaTime;
+
+            // DragObject보다 왼쪽에 있을 때
+            if (transToDragBefore)
+            {
+                if (isAlive)
+                {
+                    // DragObject와 함께 Player 좌측 이동
+                    if (hAxis < 0)
+                    {
+                        // Drag 자세 취하고 Dragging하려고 할 때 1번만 위치 조정
+                        if (isDraggingFrag == false)
+                        {
+                            col.center = new Vector3(0f, 1.37f, 0f);
+                            isDraggingFrag = true;
+                        }
+
+                        anim.speed = 1f;
+                        anim.SetBool("Dragging", true);
+                        rigid.MovePosition(transform.position + (move * 0.3f));
+                        if ((nearDrag.transform.position.z - transform.position.z) > 1.445f)
+                            nearDrag.GetComponent<Rigidbody>().MovePosition(nearDrag.transform.position + move * 0.37f);
+                    }
+
+                    // Pause
+                    else
+                    {
+                        anim.speed = 0f;
+                    }
+                }
+            }
+
+            // DragObject보다 오른쪽에 있을 때
+            else
+            {
+                if (isAlive)
+                {
+                    // DragObject와 함께 Player 우측 이동
+                    if (hAxis > 0)
+                    {
+                        // Drag 자세 취하고 Dragging하려고 할 때 1번만 위치 조정
+                        if (isDraggingFrag == false)
+                        {
+                            col.center = new Vector3(0f, 1.37f, 0f);
+                            isDraggingFrag = true;
+                        }
+
+                        anim.speed = 1f;
+                        anim.SetBool("Dragging", true);
+                        rigid.MovePosition(transform.position + (move * 0.3f));
+                        if ((transform.position.z - nearDrag.transform.position.z) > 1.445f)
+                            nearDrag.GetComponent<Rigidbody>().MovePosition(nearDrag.transform.position + move * 0.37f);
+                    }
+
+                    // Pause
+                    else
+                    {
+                        anim.speed = 0f;
+                    }
+                }
+            }
+        }
+    }
+
+    // Drag 자세 취하는 셋팅
+    void DragSet()
+    {
+        //yield return new WaitForSeconds(1.305f);
+        isDrag = true;
+        isAlive = true;
+        //yield return null;
+    }
+
+    // Drag 자세 벗어나는 셋팅
+    void DragExit()
+    {
+        isDrag = false;
+        isAlive = true;
     }
 
     private void OnCollisionEnter(Collision collision)
