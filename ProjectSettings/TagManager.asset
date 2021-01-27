@@ -7,7 +7,7 @@ TagManager:
   - Platform
   - LineTrab
   - Item
-  - ThrowItem
+  - Drag
   layers:
   - Default
   - TransparentFX

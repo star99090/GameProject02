@@ -11,14 +11,18 @@ public class Player : MonoBehaviour
     private float hAxis;
 
     bool isJump = false;
+    bool isDrag = false;
     bool throwReady = false;
+    bool transToDragBefore;
 
     Vector3 moveVec;
     Rigidbody rigid;
     Animator anim;
 
     public GameObject[] items;
-    GameObject nearObject;
+    public CapsuleCollider col;
+    GameObject nearItem;
+    GameObject nearDrag;
 
     private void Awake()
     {
@@ -35,15 +39,47 @@ public class Player : MonoBehaviour
             isJump = true;
         }
 
-        if (Input.GetButtonDown("Interation") && nearObject != null)
+        if (Input.GetButtonDown("Interation") && nearItem != null)
         {
-            if(nearObject.tag == "Item")
+            if(nearItem.tag == "Item")
             {
-                Item item = nearObject.GetComponent<Item>();
+                Item item = nearItem.GetComponent<Item>();
                 items[item.value].SetActive(true);
 
-                Destroy(nearObject);
+                Destroy(nearItem);
                 throwReady = true;
+            }
+        }
+
+        if (Input.GetButtonDown("Interation") && nearDrag != null)
+        {
+            
+
+            if (isDrag == false)
+            {
+                transToDragBefore = transform.position.z < nearDrag.transform.position.z ? true : false;
+
+                if (transToDragBefore)
+                {
+                    transform.position = new Vector3(nearDrag.transform.position.x, transform.position.y+0.375f, nearDrag.transform.position.z - 2f);
+                    transform.LookAt(nearDrag.transform);
+                    //transform.position += new Vector3(0.5f, 0f, 0f);
+                }
+                else
+                {
+                    transform.position = new Vector3(nearDrag.transform.position.x, transform.position.y+0.375f, nearDrag.transform.position.z + 2f);
+                    transform.LookAt(nearDrag.transform);
+                    //transform.position += new Vector3(-0.5f, 0f, 0f);
+                }
+                col.center = new Vector3(0f, 1.5f, 0f);
+                anim.SetTrigger("DragStart");
+                isDrag = true;
+            }
+            else
+            {
+                col.center = new Vector3(0f, 1.37f, 0f);
+                anim.SetBool("DragExit", true);
+                isDrag = false;
             }
         }
     }
@@ -106,7 +142,12 @@ public class Player : MonoBehaviour
     {
         if(other.tag == "Item")
         {
-            nearObject = other.gameObject;
+            nearItem = other.gameObject;
+        }
+
+        if(other.tag == "Drag")
+        {
+            nearDrag = other.gameObject;
         }
     }
 
@@ -114,7 +155,12 @@ public class Player : MonoBehaviour
     {
         if(other.tag == "Item")
         {
-            nearObject = null;
+            nearItem = null;
+        }
+
+        if (other.tag == "Drag")
+        {
+            nearDrag = null;
         }
     }
 }
