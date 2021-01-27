@@ -54,6 +54,7 @@ public class Player : MonoBehaviour
         hAxis = Input.GetAxisRaw("Horizontal");
         
         moveVec.Set(-vAxis, 0f, hAxis);
+        moveVec = moveVec.normalized;
 
         if (throwReady)
         {
@@ -62,11 +63,13 @@ public class Player : MonoBehaviour
                 throwReady = false;
                 items[0].SetActive(false);
                 GameObject obj = Instantiate(items[0], transform.position + moveVec + Vector3.up, Quaternion.identity);
-                obj.GetComponent<Rigidbody>().AddForce(Vector3.forward * 5f);
+                obj.SetActive(true);
+                obj.GetComponent<Rigidbody>().isKinematic = false;
+                obj.GetComponent<Rigidbody>().AddForce(transform.forward * 15f, ForceMode.Impulse);
             }
         }
 
-        moveVec = moveVec.normalized * moveSpeed * Time.deltaTime;
+        Vector3 move = moveVec * moveSpeed * Time.deltaTime;
 
         if (vAxis != 0 || hAxis != 0)
             anim.SetBool("isWalk", true);
@@ -79,14 +82,14 @@ public class Player : MonoBehaviour
             anim.SetBool("isRun", false);
 
         if(anim.GetBool("isRun"))
-            rigid.MovePosition(transform.position + (moveVec * 2f));
+            rigid.MovePosition(transform.position + (move * 2f));
         else
-            rigid.MovePosition(transform.position + moveVec);
+            rigid.MovePosition(transform.position + move);
 
 
-        if (moveVec != Vector3.zero)
+        if (move != Vector3.zero)
         {
-            Quaternion rotatePlayer = Quaternion.LookRotation(moveVec);
+            Quaternion rotatePlayer = Quaternion.LookRotation(move);
             rigid.rotation = Quaternion.Slerp(rigid.rotation, rotatePlayer, rotateSpeed * Time.deltaTime);
         }
 

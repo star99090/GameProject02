@@ -16,7 +16,7 @@ public class DamageObject : MonoBehaviour
     {
         if (rigid.useGravity == true)
         {
-            rigid.velocity = new Vector3(0f, -250f, 0f)*Time.deltaTime;
+            rigid.velocity = new Vector3(0f, -500f, 0f)*Time.deltaTime;
         }
     }
 
@@ -26,12 +26,17 @@ public class DamageObject : MonoBehaviour
         {
             Debug.Log("Damaged");
             isFirst = false;
-            rigid.useGravity = false;
+            rigid.isKinematic = true;
         }
 
+        if(collision.gameObject.tag == "Item")
+        {
+            isFirst = false;
+            rigid.isKinematic = true;
+        }
         if(collision.gameObject.tag == "Platform")
         {
-            rigid.useGravity = false;
+            rigid.isKinematic = true;
         }
     }
 }

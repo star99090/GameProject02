@@ -3650,7 +3650,7 @@ GameObject:
   - component: {fileID: 8915519351996148987}
   m_Layer: 0
   m_Name: Falling Object
-  m_TagString: Untagged
+  m_TagString: LineTrab
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
