@@ -81,19 +81,20 @@ public class Player : MonoBehaviour
                         transform.LookAt(nearDrag.transform);
                         transform.position += new Vector3(-0.75f, -0.75f, 0f);
                     }
-
+                    nearDrag.GetComponent<Rigidbody>().isKinematic = false;
                     col.center = new Vector3(0f, 1.55f, 0f);
                     anim.SetTrigger("DragStart");
                     Invoke("DragSet", 1.305f);
-                    //StartCoroutine(DragSet());
                 }
 
                 // Drag 자세 취소하기
                 else
                 {
                     isAlive = false;
+                    nearDrag.GetComponent<Rigidbody>().isKinematic = true;
                     col.center = new Vector3(0f, 1.37f, 0f);
                     anim.SetBool("DragExit", true);
+                    anim.SetBool("Dragging", false);
                     Invoke("DragExit", 1.3f);
                     isDraggingFrag = false;
                     anim.speed = 1f;
@@ -101,9 +102,6 @@ public class Player : MonoBehaviour
             }
         }
     }
-
-    // e 누르고 drag 이동한 뒤에 drag 풀고 다시 e 누르면 오류
-    // 오류를 잡읍시다
 
     void FixedUpdate()
     {
@@ -225,10 +223,8 @@ public class Player : MonoBehaviour
     // Drag 자세 취하는 셋팅
     void DragSet()
     {
-        //yield return new WaitForSeconds(1.305f);
         isDrag = true;
         isAlive = true;
-        //yield return null;
     }
 
     // Drag 자세 벗어나는 셋팅
@@ -240,7 +236,7 @@ public class Player : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.tag == "Platform")
+        if (collision.gameObject.tag == "Platform" || collision.gameObject.tag == "Drag")
             isJump = false;
     }
 
