@@ -37,11 +37,11 @@ public class Player : MonoBehaviour
         if (isAlive)
         {
             // Jump
-            if (Input.GetButtonDown("Jump") && !isJump/*!ani.GetBool("isJumping")*/)
+            if (Input.GetButtonDown("Jump") && !isJump /*!anim.GetBool("isJump")*/)
             {
-                rigid.AddForce(Vector2.up * jumpPower, ForceMode.Impulse);
-                //ani.SetBool("isJumping", true);
                 isJump = true;
+                //anim.SetBool("isJump", true);
+                rigid.AddForce(Vector3.up * jumpPower, ForceMode.Impulse);
             }
 
             // Item 획득
@@ -100,7 +100,7 @@ public class Player : MonoBehaviour
                     anim.speed = 1f;
                 }
             }
-        }
+        }        
     }
 
     void FixedUpdate()
@@ -110,7 +110,7 @@ public class Player : MonoBehaviour
         
         moveVec.Set(-vAxis, 0f, hAxis);
         moveVec = moveVec.normalized;
-
+        
         // Item 투척
         if (throwReady)
         {
@@ -140,8 +140,8 @@ public class Player : MonoBehaviour
             if (isAlive)
             {
                 // Player 이동
-                if (anim.GetBool("isRun")) rigid.MovePosition(transform.position + (move * 2f));
-                else rigid.MovePosition(transform.position + move);
+                if (anim.GetBool("isRun") /*&& moveReady*/) rigid.MovePosition(transform.position + (move * 1.8f));
+                else /*if(!anim.GetBool("isRun") && moveReady)*/ rigid.MovePosition(transform.position + move);
 
                 // Player 회전
                 if (moveVec != Vector3.zero)
@@ -237,7 +237,7 @@ public class Player : MonoBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.tag == "Platform" || collision.gameObject.tag == "Drag")
-            isJump = false;
+            isJump = false; //anim.SetBool("isJump", false);
     }
 
     private void OnTriggerStay(Collider other)
