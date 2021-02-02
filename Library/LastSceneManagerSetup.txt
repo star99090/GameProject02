@@ -1,5 +1,5 @@
 sceneSetups:
-- path: Assets/06.Res/Standard Assets/SampleScenes/Scenes/CharacterThirdPerson.unity
+- path: Assets/01.Scenes/DemoScene/DemoScene.unity
   isLoaded: 1
   isActive: 1
   isSubScene: 0
