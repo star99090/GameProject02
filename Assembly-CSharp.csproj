@@ -65,6 +65,7 @@
     <Compile Include="Assets\02.Scripts\DamageObject.cs" />
     <Compile Include="Assets\02.Scripts\Item.cs" />
     <Compile Include="Assets\02.Scripts\LineTrab.cs" />
+    <Compile Include="Assets\02.Scripts\Monster.cs" />
     <Compile Include="Assets\02.Scripts\Player.cs" />
     <Compile Include="Assets\06.Res\Standard Assets\Environment\Water (Basic)\Scripts\WaterBasic.cs" />
     <Compile Include="Assets\06.Res\Standard Assets\Environment\Water\Water\Scripts\Displace.cs" />
