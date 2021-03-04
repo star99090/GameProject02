@@ -9,6 +9,7 @@ public class Monster : MonoBehaviour
     private NavMeshAgent nav;
     private bool isTrace;
     private bool isStart;
+    [SerializeField] float StoppingDistance;
 
     private void Awake()
     {
@@ -19,9 +20,16 @@ public class Monster : MonoBehaviour
     {
         if (isStart)
         {
-            nav.isStopped = false;
-            transform.LookAt(target.transform.position);
-            nav.SetDestination(target.transform.position);
+            if(Vector3.Distance(target.transform.position, transform.position) <= StoppingDistance)
+            {
+                isStart = false;
+            }
+            else
+            {
+                nav.isStopped = false;
+                transform.LookAt(target.transform.position);
+                nav.SetDestination(target.transform.position);
+            }
         }
         else
         {
